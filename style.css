@@ -1,12 +1,11 @@
-body>* {
+body{
     margin: 0;
     padding: 0;
-}
-
-body{
     width: 100vw;
     height: 100vh;
     display: flex;
+    flex-direction: column;
+    gap: 3vh;
     justify-content: center;
     align-items: center;
 }
@@ -21,4 +20,29 @@ button{
     cursor: pointer;
     font-size: 1.2rem;
     font-weight: bold;
+}
+
+button:hover {
+    background-color: #fff;
+    color: #000;
+    border: #000 1px solid;
+}
+
+.container {
+    background-color: rgba(128, 128, 128, 0.300);
+    border-radius: 5px;
+    border: rgba(128, 128, 128, 0.320) 1px solid;
+    padding: 0;
+    margin: 0;
+    width: 600px;
+    height: 600px;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+}
+
+container > .tile {
+    width: 200px;
+    height: 200px;
 }
