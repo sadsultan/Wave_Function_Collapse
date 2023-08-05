@@ -1,3 +1,4 @@
+// create the grid
 function newGrid(size){
     let grid=[]
     for(let i = 0 ; i < size ; i++) {
@@ -8,3 +9,13 @@ function newGrid(size){
     }
     return grid;
 }
+
+// Tile class, this will hold the tiles in the grid, empty by default with max waveOrder
+class Tile {
+    constructor(){
+        this.img = null;
+        this.waveOrder = Infinity
+    }
+} 
+
+// 
