@@ -1,28 +1,10 @@
-let generateBtn = document.getElementById("generate")
-
-function generateTileSequence() {
-    
+function newGrid(size){
+    let grid=[]
+    for(let i = 0 ; i < size ; i++) {
+        grid.push([])
+        for (let j = 0; j < size; j++) {
+            grid[i].push(0)
+        }
+    }
+    return grid;
 }
-
-function setTiles() {
-    let tileSequence = generateTileSequence()
-    for(let tile in tileSequence) {
-
-    }   
-}
-
-function clearTiles() {
-    
-}
-
-generateBtn.addEventListener("click", function () {
-    generateBtn.innerText = "Generating..."
-    
-    clearTiles()
-    
-    setTimeout(() => {
-        setTiles()
-        generateBtn.innerText = "Generate"
-    },1000);
-})
-
