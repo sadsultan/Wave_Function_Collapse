@@ -52,7 +52,7 @@ function newGrid(){
 
 
 // Remove impossible tiles from the possibilities array of each position in the grid
-function nextCollapse(grid, position) {
+function updatePossibilities(grid, position) {
     let row = position[0]
     let column = position[1]
     let lastTile = grid[row][column][0]
@@ -74,4 +74,31 @@ function nextCollapse(grid, position) {
         grid[row][column+1] = grid[row][column+1].filter(tile => TILEKEY[lastTile]['right'].includes(tile));
 
     return grid
+}
+
+
+// Check if the grid has a solved tile, else return position of the spot with least possibilities
+function nextCollapse(grid) {
+    let row = 0;
+    let column = 0;
+    let tileCollapsed = false;
+    for (let i = 0; i < SIZE; i++) {
+        for (let j = 0; j < SIZE; j++) {
+            if (grid[i][j].length === 1) {
+                row = i;
+                column = j;
+                tileCollapsed = true;
+                break;
+            }
+            if (grid[i][j] <= grid[row][column].length) {
+                row = i;
+                column = j;
+            }
+        }
+    }
+    if (!tileCollapsed) {
+        grid[row][column] = [grid[row][column][Math.floor(Math.random() * grid[row][column].length)]];
+    }
+
+    return updatePossibilities(grid, [row, column]);
 }
