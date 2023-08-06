@@ -49,3 +49,29 @@ function newGrid(){
     }
     return grid
 }
+
+
+// Remove impossible tiles from the possibilities array of each position in the grid
+function nextCollapse(grid, position) {
+    let row = position[0]
+    let column = position[1]
+    let lastTile = grid[row][column][0]
+
+    // if the recently placed tile was not on the top row
+    if(row > 0 && grid[row-1][column].length >= 1) 
+        grid[row-1][column] = grid[row-1][column].filter(tile => TILEKEY[lastTile]['up'].includes(tile));
+
+    // if the recently placed tile was not on the bottom row
+    if(row < SIZE-1 && grid[row+1][column].length >= 1) 
+        grid[row+1][column] = grid[row+1][column].filter(tile => TILEKEY[lastTile]['down'].includes(tile));
+
+    // if the recently placed tile was not on the first column
+    if(column > 0 && grid[row][column-1].length >= 1) 
+        grid[row][column-1] = grid[row][column-1].filter(tile => TILEKEY[lastTile]['left'].includes(tile));
+
+    // if the recently placed tile was on the last column
+    if(column < SIZE-1 && grid[row][column+1].length >= 1) 
+        grid[row][column+1] = grid[row][column+1].filter(tile => TILEKEY[lastTile]['right'].includes(tile));
+
+    return grid
+}
