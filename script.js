@@ -84,7 +84,7 @@ function collapse(grid) {
     let tileCollapsed = false;
     for (let i = 0; i < SIZE; i++) {
         for (let j = 0; j < SIZE; j++) {
-            if (grid[i][j].length === 1) {
+            if (grid[i][j].length == 1) {
                 row = i;
                 column = j;
                 tileCollapsed = true;
@@ -100,13 +100,14 @@ function collapse(grid) {
         grid[row][column] = [grid[row][column][Math.floor(Math.random() * grid[row][column].length)]];
     }
 
+    console.log('Another one down');
     return updatePossibilities(grid, [row, column]);
 }
 
 function isSolved(grid) {
     for (let i = 0; i < SIZE; i++) {
         for (let j = 0; j < SIZE; j++) {
-           if (grid[i][j].length !== 1) {
+           if (grid[i][j].length > 1) {
                return false;
            }
         }
@@ -116,9 +117,12 @@ function isSolved(grid) {
 
 function main() {
     grid = newGrid();
-
-    while (!isSolved(grid)) {
+    let isDone = false;
+    while (!isDone) {
         grid = collapse(grid);
+        isDone = isSolved(grid);
     }
     console.log(grid);
 }
+
+main();
