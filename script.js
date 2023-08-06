@@ -1,30 +1,30 @@
 // Key for what tiles can have what neighbours and in what directions.
 const TILEKEY = {
-    blank: {
+    'blank': {
         'up': ['up', 'blank'],
         'down': ['blank', 'down'],
         'left': ['left', 'blank'],
         'right': ['blank', 'right']
     },
-    up: {
+    'up': {
         'up': ['down', 'left', 'right'],
         'down': ['down', 'blank'],
         'left': ['up', 'down', 'right'],
         'right': ['up', 'down', 'left']
     },
-    down: {
+    'down': {
         'up': ['up', 'blank'],
         'down': ['up', 'left', 'right'],
         'left': ['down' ,'up', 'right'],
         'right': ['down' ,'up', 'left']
     },
-    left: {
+    'left': {
         'up': ['down', 'left', 'right'],
         'down': ['up', 'right', 'left'],
         'left': ['right', 'down', 'up'],
         'right': ['blank', 'right']
     },
-    right: {
+    'right': {
         'up': ['right', 'down', 'left'],
         'down': ['up', 'left', 'right'],
         'left': ['left', 'blank'],
