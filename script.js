@@ -78,7 +78,7 @@ function updatePossibilities(grid, position) {
 
 
 // Check if the grid has a solved tile, else return position of the spot with least possibilities
-function nextCollapse(grid) {
+function collapse(grid) {
     let row = 0;
     let column = 0;
     let tileCollapsed = false;
@@ -101,4 +101,24 @@ function nextCollapse(grid) {
     }
 
     return updatePossibilities(grid, [row, column]);
+}
+
+function isSolved(grid) {
+    for (let i = 0; i < SIZE; i++) {
+        for (let j = 0; j < SIZE; j++) {
+           if (grid[i][j].length !== 1) {
+               return false;
+           }
+        }
+    }
+    return true;
+}
+
+function main() {
+    grid = newGrid();
+
+    while (!isSolved(grid)) {
+        grid = collapse(grid);
+    }
+    console.log(grid);
 }
