@@ -116,12 +116,15 @@ function isSolved(grid) {
 }
 
 function main() {
-    grid = newGrid();
+    let grid = newGrid();
     let isDone = false;
+    let x = 0;
     while (!isDone) {
         grid = collapse(grid);
         isDone = isSolved(grid);
+        x++;
     }
+    console.log(x);
     console.log(grid);
 }
 
