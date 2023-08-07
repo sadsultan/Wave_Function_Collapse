@@ -47,7 +47,6 @@ function newGrid(size){
     return grid
 }
 
-
 // Remove impossible tiles from the possibilities array of each position in the grid
 function updatePossibilities(grid, position, size) {
     let row = position[0]
@@ -114,10 +113,15 @@ function isSolved(grid, size) {
     return true;
 }
 
-function main(size) {
+export function pattern (size) {
     let grid = newGrid(size);
-    while (!isSolved(grid, size)) {
+    let reps = 0
+    while (!isSolved(grid, size) && reps < size*size+10) {
         grid = collapse(grid, size);
+        reps++;
+    }
+    if (!isSolved(grid,size)) {
+        grid = pattern(size);
     }
     return grid;
 }
