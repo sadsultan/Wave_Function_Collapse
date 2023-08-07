@@ -36,7 +36,7 @@ const TILEKEY = {
 const TILES = ['up','down','left','right','blank']
 
 // size of grid, ONLY FOR TESTING PURPOSES
-const SIZE = 3;
+const SIZE = 5;
 
 // create a grid using nested arrays that has all the tiles in each spot 
 function newGrid(){
@@ -55,26 +55,30 @@ function newGrid(){
 function updatePossibilities(grid, position) {
     let row = position[0]
     let column = position[1]
-    let lastTile = grid[row][column][0]
+    let lastTile = grid[row][column]
 
-    // if the recently placed tile was not on the top row
-    if(row > 0 && grid[row-1][column].length >= 1) 
-        grid[row-1][column] = grid[row-1][column].filter(tile => TILEKEY[lastTile]['up'].includes(tile));
+    // check if lastTile is a valid key in TILEKEY
+    if (TILEKEY[lastTile]) {
+      // if the recently placed tile was not on the top row
+      if(row > 0 && Array.isArray(grid[row-1][column]) && grid[row-1][column].length >= 1) 
+          grid[row-1][column] = grid[row-1][column].filter(tile => TILEKEY[lastTile]['up'].includes(tile));
 
-    // if the recently placed tile was not on the bottom row
-    if(row < SIZE-1 && grid[row+1][column].length >= 1) 
-        grid[row+1][column] = grid[row+1][column].filter(tile => TILEKEY[lastTile]['down'].includes(tile));
+      // if the recently placed tile was not on the bottom row
+      if(row < SIZE-1 && Array.isArray(grid[row+1][column]) && grid[row+1][column].length >= 1) 
+          grid[row+1][column] = grid[row+1][column].filter(tile => TILEKEY[lastTile]['down'].includes(tile));
 
-    // if the recently placed tile was not on the first column
-    if(column > 0 && grid[row][column-1].length >= 1) 
-        grid[row][column-1] = grid[row][column-1].filter(tile => TILEKEY[lastTile]['left'].includes(tile));
+      // if the recently placed tile was not on the first column
+      if(column > 0 && Array.isArray(grid[row][column-1]) && grid[row][column-1].length >= 1) 
+          grid[row][column-1] = grid[row][column-1].filter(tile => TILEKEY[lastTile]['left'].includes(tile));
 
-    // if the recently placed tile was on the last column
-    if(column < SIZE-1 && grid[row][column+1].length >= 1) 
-        grid[row][column+1] = grid[row][column+1].filter(tile => TILEKEY[lastTile]['right'].includes(tile));
+      // if the recently placed tile was not on the last column
+      if(column < SIZE-1 && Array.isArray(grid[row][column+1]) && grid[row][column+1].length >= 1) 
+          grid[row][column+1] = grid[row][column+1].filter(tile => TILEKEY[lastTile]['right'].includes(tile));
+    }
 
     return grid
 }
+
 
 
 // Check if the grid has a solved tile, else return position of the spot with least possibilities
@@ -84,21 +88,22 @@ function collapse(grid) {
     let tileCollapsed = false;
     for (let i = 0; i < SIZE; i++) {
         for (let j = 0; j < SIZE; j++) {
-            if (grid[i][j].length == 1) {
-                row = i;
-                column = j;
-                tileCollapsed = true;
-                break;
-            }
-            if (grid[i][j] <= grid[row][column].length) {
-                row = i;
-                column = j;
+            if (Array.isArray(grid[i][j])){
+                if (grid[i][j].length == 1) { // this checks if the thingie is an arrayv and never gets past the first point
+                    row = i;
+                    column = j;
+                    grid[i][j] = grid[i][j][0];
+                    tileCollapsed = true;
+                    break;
+                } else if (grid[i][j].length <= grid[row][column].length && grid[i][j].length != 1) {
+                    row = i;
+                    column = j;
+                } else continue;
             }
         }
     }
-    if (!tileCollapsed) {
-        grid[row][column] = [grid[row][column][Math.floor(Math.random() * grid[row][column].length)]];
-    }
+    if (!tileCollapsed)
+        grid[row][column] = grid[row][column][Math.floor(Math.random() * grid[row][column].length)];
 
     console.log('Another one down');
     return updatePossibilities(grid, [row, column]);
@@ -107,7 +112,7 @@ function collapse(grid) {
 function isSolved(grid) {
     for (let i = 0; i < SIZE; i++) {
         for (let j = 0; j < SIZE; j++) {
-           if (grid[i][j].length > 1) {
+           if (Array.isArray(grid[i][j])) {
                return false;
            }
         }
@@ -117,15 +122,10 @@ function isSolved(grid) {
 
 function main() {
     let grid = newGrid();
-    let isDone = false;
-    let x = 0;
-    while (!isDone) {
+    while (!isSolved(grid)) {
         grid = collapse(grid);
-        isDone = isSolved(grid);
-        x++;
     }
-    console.log(x);
-    console.log(grid);
+    return grid;
 }
 
 main();
