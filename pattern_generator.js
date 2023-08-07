@@ -35,15 +35,12 @@ const TILEKEY = {
 // holds tile names
 const TILES = ['up','down','left','right','blank']
 
-// size of grid, ONLY FOR TESTING PURPOSES
-const SIZE = 5;
-
 // create a grid using nested arrays that has all the tiles in each spot 
-function newGrid(){
+function newGrid(size){
     let grid = []
-    for (let i = 0; i < SIZE; i++) {
+    for (let i = 0; i < size; i++) {
         grid.push([]);
-        for (let j = 0; j < SIZE; j++) {
+        for (let j = 0; j < size; j++) {
             grid[i].push(TILES.slice());
         }
     }
@@ -52,7 +49,7 @@ function newGrid(){
 
 
 // Remove impossible tiles from the possibilities array of each position in the grid
-function updatePossibilities(grid, position) {
+function updatePossibilities(grid, position, size) {
     let row = position[0]
     let column = position[1]
     let lastTile = grid[row][column]
@@ -60,34 +57,32 @@ function updatePossibilities(grid, position) {
     // check if lastTile is a valid key in TILEKEY
     if (TILEKEY[lastTile]) {
       // if the recently placed tile was not on the top row
-      if(row > 0 && Array.isArray(grid[row-1][column]) && grid[row-1][column].length >= 1) 
+      if(row > 0 && Array.isArray(grid[row-1][column]) && grid[row-1][column].length > 1) 
           grid[row-1][column] = grid[row-1][column].filter(tile => TILEKEY[lastTile]['up'].includes(tile));
 
       // if the recently placed tile was not on the bottom row
-      if(row < SIZE-1 && Array.isArray(grid[row+1][column]) && grid[row+1][column].length >= 1) 
+      if(row < size-1 && Array.isArray(grid[row+1][column]) && grid[row+1][column].length > 1) 
           grid[row+1][column] = grid[row+1][column].filter(tile => TILEKEY[lastTile]['down'].includes(tile));
 
       // if the recently placed tile was not on the first column
-      if(column > 0 && Array.isArray(grid[row][column-1]) && grid[row][column-1].length >= 1) 
+      if(column > 0 && Array.isArray(grid[row][column-1]) && grid[row][column-1].length > 1) 
           grid[row][column-1] = grid[row][column-1].filter(tile => TILEKEY[lastTile]['left'].includes(tile));
 
       // if the recently placed tile was not on the last column
-      if(column < SIZE-1 && Array.isArray(grid[row][column+1]) && grid[row][column+1].length >= 1) 
+      if(column < size-1 && Array.isArray(grid[row][column+1]) && grid[row][column+1].length > 1) 
           grid[row][column+1] = grid[row][column+1].filter(tile => TILEKEY[lastTile]['right'].includes(tile));
     }
 
     return grid
 }
 
-
-
 // Check if the grid has a solved tile, else return position of the spot with least possibilities
-function collapse(grid) {
+function collapse(grid, size) {
     let row = 0;
     let column = 0;
     let tileCollapsed = false;
-    for (let i = 0; i < SIZE; i++) {
-        for (let j = 0; j < SIZE; j++) {
+    for (let i = 0; i < size; i++) {
+        for (let j = 0; j < size; j++) {
             if (Array.isArray(grid[i][j])){
                 if (grid[i][j].length == 1) { // this checks if the thingie is an arrayv and never gets past the first point
                     row = i;
@@ -105,13 +100,12 @@ function collapse(grid) {
     if (!tileCollapsed)
         grid[row][column] = grid[row][column][Math.floor(Math.random() * grid[row][column].length)];
 
-    console.log('Another one down');
-    return updatePossibilities(grid, [row, column]);
+    return updatePossibilities(grid, [row, column], size);
 }
 
-function isSolved(grid) {
-    for (let i = 0; i < SIZE; i++) {
-        for (let j = 0; j < SIZE; j++) {
+function isSolved(grid, size) {
+    for (let i = 0; i < size; i++) {
+        for (let j = 0; j < size; j++) {
            if (Array.isArray(grid[i][j])) {
                return false;
            }
@@ -120,12 +114,10 @@ function isSolved(grid) {
     return true;
 }
 
-function main() {
-    let grid = newGrid();
-    while (!isSolved(grid)) {
-        grid = collapse(grid);
+function main(size) {
+    let grid = newGrid(size);
+    while (!isSolved(grid, size)) {
+        grid = collapse(grid, size);
     }
     return grid;
 }
-
-main();
