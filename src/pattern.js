@@ -46,32 +46,42 @@ function newGrid(size){
     }
     return grid
 }
+// grid[row-1][column] = grid[row-1][column].filter(tile => TILEKEY[lastTile]['up'].includes(tile));
+function compareTiles(comparisonTile, currTile, direction) {
+    if (!Array.isArray(comparisonTile) && currTile.length > 1) {
+        currTile = currTile.filter(tile => TILEKEY[comparisonTile][direction].includes(tile));
+    }
+    return currTile
+}
 
 // Remove impossible tiles from the possibilities array of each position in the grid
-function updatePossibilities(grid, position, size) {
-    let row = position[0]
-    let column = position[1]
-    let lastTile = grid[row][column]
-
-    // check if lastTile is a valid key in TILEKEY
-    if (TILEKEY[lastTile]) {
-      // if the recently placed tile was not on the top row
-      if(row > 0 && Array.isArray(grid[row-1][column]) && grid[row-1][column].length > 1) 
-          grid[row-1][column] = grid[row-1][column].filter(tile => TILEKEY[lastTile]['up'].includes(tile));
-
-      // if the recently placed tile was not on the bottom row
-      if(row < size-1 && Array.isArray(grid[row+1][column]) && grid[row+1][column].length > 1) 
-          grid[row+1][column] = grid[row+1][column].filter(tile => TILEKEY[lastTile]['down'].includes(tile));
-
-      // if the recently placed tile was not on the first column
-      if(column > 0 && Array.isArray(grid[row][column-1]) && grid[row][column-1].length > 1) 
-          grid[row][column-1] = grid[row][column-1].filter(tile => TILEKEY[lastTile]['left'].includes(tile));
-
-      // if the recently placed tile was not on the last column
-      if(column < size-1 && Array.isArray(grid[row][column+1]) && grid[row][column+1].length > 1) 
-          grid[row][column+1] = grid[row][column+1].filter(tile => TILEKEY[lastTile]['right'].includes(tile));
+function updatePossibilities(grid, size) {
+    for (let row = 0; row < size; row++) {
+        for (let column = 0; column < size; column++) {
+            // comparing with the "down" of the tile above
+            if (Array.isArray(grid[row][column])){
+                if (row > 0) {
+                    grid[row][column] = compareTiles(grid[row-1][column], grid[row][column], 'down');
+                    if(grid[row][column].length == 1) return grid
+                }
+                // comparing with the "up" of the tile below
+                if (row < size-1) {
+                    grid[row][column] = compareTiles(grid[row+1][column], grid[row][column], 'up');
+                    if(grid[row][column].length == 1) return grid
+                }
+                // comparing with the "right" of the tile to the left
+                if (column > 0) {
+                    grid[row][column] = compareTiles(grid[row][column-1], grid[row][column], 'right');
+                    if(grid[row][column].length == 1) return grid
+                }
+                // comparing with the "left" of the tile to the right
+                if (column < size-1) {
+                    grid[row][column] = compareTiles(grid[row][column+1], grid[row][column], 'left');
+                    if(grid[row][column].length == 1) return grid
+                }
+            }
+        }
     }
-
     return grid
 }
 
@@ -79,27 +89,24 @@ function updatePossibilities(grid, position, size) {
 function collapse(grid, size) {
     let row = 0;
     let column = 0;
-    let tileCollapsed = false;
     for (let i = 0; i < size; i++) {
         for (let j = 0; j < size; j++) {
             if (Array.isArray(grid[i][j])){
-                if (grid[i][j].length == 1) { // this checks if the thingie is an arrayv and never gets past the first point
-                    row = i;
-                    column = j;
+                if (grid[i][j].length == 1) {
                     grid[i][j] = grid[i][j][0];
-                    tileCollapsed = true;
-                    break;
-                } else if (grid[i][j].length <= grid[row][column].length && grid[i][j].length != 1) {
-                    row = i;
-                    column = j;
-                } else continue;
-            }
+                    return grid;
+                } else { 
+                    if (grid[i][j].length < grid[row][column].length) {
+                        row = i;
+                        column = j;
+                    } else continue;
+                }
+            } else continue;
         }
     }
-    if (!tileCollapsed)
-        grid[row][column] = grid[row][column][Math.floor(Math.random() * grid[row][column].length)];
 
-    return updatePossibilities(grid, [row, column], size);
+    grid[row][column] = grid[row][column][Math.floor(Math.random() * grid[row][column].length)];
+    return grid;
 }
 
 function isSolved(grid, size) {
@@ -116,12 +123,13 @@ function isSolved(grid, size) {
 export function pattern (size) {
     let grid = newGrid(size);
     let reps = 0
-    while (!isSolved(grid, size) && reps < size*size+10) {
+    while (reps < size**2 + 10) {
         grid = collapse(grid, size);
+        grid = updatePossibilities(grid, size);
+        if (isSolved(grid, size)) return grid;
         reps++;
     }
-    if (!isSolved(grid,size)) {
-        grid = pattern(size);
-    }
-    return grid;
+    return pattern(size);
 }
+
+// console.log(pattern(5));
