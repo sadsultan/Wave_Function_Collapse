@@ -38,13 +38,13 @@ function drawGrid (grid, size) {
 const generate = document.getElementById('generate');
 generate.addEventListener('click', () =>{
     let size = document.getElementById('size').value;
-    if (size >= 2 && size <= 20) {
+    if (size >= 2 && size <= 35) {
         generate.innerText = 'Generating...'
         let grid = pattern(size);
         clearGrid();
         drawGrid(grid, size);
         generate.innerText = 'Regenerate'
     } else {
-        alert('Please enter a number between 2 and 20');
+        alert('Please enter a number between 2 and 35');
     }
 });

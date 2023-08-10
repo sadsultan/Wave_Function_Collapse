@@ -48,7 +48,8 @@ function newGrid(size){
 }
 // grid[row-1][column] = grid[row-1][column].filter(tile => TILEKEY[lastTile]['up'].includes(tile));
 function compareTiles(comparisonTile, currTile, direction) {
-    if (!Array.isArray(comparisonTile) && currTile.length > 1) {
+    if(comparisonTile === 'p' || comparisonTile === 'u') comparisonTile = 'up';
+    if (typeof(comparisonTile) === "string" && Array.isArray(currTile) && currTile.length > 1) {
         currTile = currTile.filter(tile => TILEKEY[comparisonTile][direction].includes(tile));
     }
     return currTile
@@ -91,7 +92,7 @@ function collapse(grid, size) {
     let column = 0;
     for (let i = 0; i < size; i++) {
         for (let j = 0; j < size; j++) {
-            if (Array.isArray(grid[i][j])){
+            if (typeof grid[i][j] !== 'string') {
                 if (grid[i][j].length == 1) {
                     grid[i][j] = grid[i][j][0];
                     return grid;
@@ -99,13 +100,13 @@ function collapse(grid, size) {
                     if (grid[i][j].length < grid[row][column].length) {
                         row = i;
                         column = j;
-                    } else continue;
+                    }
                 }
-            } else continue;
+            }
         }
     }
-
-    grid[row][column] = grid[row][column][Math.floor(Math.random() * grid[row][column].length)];
+    const randomPosition = Math.floor(Math.random() * grid[row][column].length);
+    grid[row][column] = grid[row][column][randomPosition];
     return grid;
 }
 
@@ -123,7 +124,7 @@ function isSolved(grid, size) {
 export function pattern (size) {
     let grid = newGrid(size);
     let reps = 0
-    while (reps < size**2 + 10) {
+    while (reps <= size**2) {
         grid = collapse(grid, size);
         grid = updatePossibilities(grid, size);
         if (isSolved(grid, size)) return grid;
@@ -131,5 +132,3 @@ export function pattern (size) {
     }
     return pattern(size);
 }
-
-// console.log(pattern(5));
